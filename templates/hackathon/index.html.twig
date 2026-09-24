@@ -1,0 +1,43 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Liste des Hackathons - Hackat'Innov{% endblock %}
+
+{% block body %}
+    <div class="container mt-5" style="max-width: 900px; margin: auto; font-family: sans-serif;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+            <h1>🏆 Liste des Hackathons</h1>
+            <a href="{{ path('app_hackathon_index_json') }}" style="padding: 10px 15px; background: #007bff; color: white; text-decoration: none; border-radius: 5px;" target="_blank">
+                Voir au format JSON ⚡
+            </a>
+        </div>
+
+        {% if hackathons is empty %}
+            <p>Aucun hackathon trouvé en base de données.</p>
+        {% else %}
+            <table border="1" cellpadding="10" cellspacing="0" style="width: 100%; border-collapse: collapse; text-align: left;">
+                <thead style="background-color: #343a40; color: white;">
+                <tr>
+                    <th>#</th>
+                    <th>Thème</th>
+                    <th>Ville & Lieu</th>
+                    <th>Début</th>
+                    <th>Fin</th>
+                    <th>Projets</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for h in hackathons %}
+                    <tr style="border-bottom: 1px solid #ddd;">
+                        <td>{{ h.id }}</td>
+                        <td><strong>{{ h.theme }}</strong></td>
+                        <td>{{ h.ville }} ({{ h.lieu }})</td>
+                        <td>{{ h.dateHeureDebut|date('d/m/Y H:i') }}</td>
+                        <td>{{ h.dateHeureFin|date('d/m/Y H:i') }}</td>
+                        <td><span style="background: #28a745; color: white; padding: 3px 8px; border-radius: 10px;">{{ h.projets|length }} projet(s)</span></td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        {% endif %}
+    </div>
+{% endblock %}
