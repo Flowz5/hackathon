@@ -17,7 +17,6 @@ class AppFixtures extends Fixture
 {
     public function load(ObjectManager $manager): void
     {
-        // 1. Organisateur
         $org1 = new Organisateur();
         $org1->setNom("Hackat'Innov France")
             ->setStatut("Association")
@@ -25,7 +24,6 @@ class AppFixtures extends Fixture
             ->setSiteWeb("https://hackatinnov.fr");
         $manager->persist($org1);
 
-        // 2. Hackathon
         $hackathon = new Hackathon();
         $hackathon->setTheme("L'IA au service de la Santé")
             ->setLieu("Campus Numérique")
@@ -35,20 +33,17 @@ class AppFixtures extends Fixture
             ->setAffiche("affiche-ia-sante.png")
             ->setObjectifs("Développer des prototypes innovants pour assister le diagnostic médical.");
 
-        // Ajout de l'organisateur au hackathon
         if (method_exists($hackathon, 'addOrganisateur')) {
             $hackathon->addOrganisateur($org1);
         }
         $manager->persist($hackathon);
 
-        // 3. Projet
         $projet1 = new Projet();
         $projet1->setDescription("Application mobile de détection précoce des mélanomes par vision par ordinateur.")
             ->setRetenu(true)
             ->setHackathon($hackathon);
         $manager->persist($projet1);
 
-        // 4. Membre du Jury
         $jury1 = new MembreJury();
         $jury1->setNom("Dupont")
             ->setPrenom("Valérie")
@@ -56,7 +51,6 @@ class AppFixtures extends Fixture
             ->setTelephone("0611223344");
         $manager->persist($jury1);
 
-        // 5. Participants
         $part1 = new Participant();
         $part1->setNom("Martin")
             ->setPrenom("Lucas")
@@ -75,7 +69,6 @@ class AppFixtures extends Fixture
             ->setLienPortefolio("https://github.com/emma-d");
         $manager->persist($part2);
 
-        // 6. Équipe
         $equipe1 = new Equipe();
         $equipe1->setNom("DeepHealth")
             ->setLienPrototype("https://github.com/hackat-innov/deephealth-proto")
@@ -83,7 +76,6 @@ class AppFixtures extends Fixture
             ->setResponsable($part1);
         $manager->persist($equipe1);
 
-        // 7. Inscriptions
         $inscr1 = new Inscription();
         $inscr1->setDate(new \DateTime('2026-10-01 14:30:00'))
             ->setCompetence("Développement Symfony / Python")
@@ -100,14 +92,12 @@ class AppFixtures extends Fixture
             ->setEquipe($equipe1);
         $manager->persist($inscr2);
 
-        // 8. Évaluation / Note
         $note = new Noter();
         $note->setMembreJury($jury1)
             ->setEquipe($equipe1)
             ->setNote(17.5);
         $manager->persist($note);
 
-        // Envoi en base de données
         $manager->flush();
     }
 }
