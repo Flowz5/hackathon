@@ -7,6 +7,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Attribute\Groups;
 
 #[ORM\Entity(repositoryClass: HackathonRepository::class)]
 class Hackathon
@@ -14,33 +15,42 @@ class Hackathon
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups(['hackathon:read'])]
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
+    #[Groups(['hackathon:read'])]
     private ?string $theme = null;
 
     #[ORM\Column(length: 255)]
+    #[Groups(['hackathon:read'])]
     private ?string $lieu = null;
 
     #[ORM\Column(length: 150)]
+    #[Groups(['hackathon:read'])]
     private ?string $ville = null;
 
     #[ORM\Column]
+    #[Groups(['hackathon:read'])]
     private ?\DateTime $dateHeureDebut = null;
 
     #[ORM\Column]
+    #[Groups(['hackathon:read'])]
     private ?\DateTime $dateHeureFin = null;
 
     #[ORM\Column(length: 255, nullable: true)]
+    #[Groups(['hackathon:read'])]
     private ?string $affiche = null;
 
     #[ORM\Column(type: Types::TEXT, nullable: true)]
+    #[Groups(['hackathon:read'])]
     private ?string $objectifs = null;
 
     /**
      * @var Collection<int, Organisateur>
      */
     #[ORM\ManyToMany(targetEntity: Organisateur::class, inversedBy: 'hackathons')]
+    #[Groups(['hackathon:read'])]
     private Collection $organisateurs;
 
     /**
@@ -53,6 +63,7 @@ class Hackathon
      * @var Collection<int, Projet>
      */
     #[ORM\OneToMany(targetEntity: Projet::class, mappedBy: 'hackathon')]
+    #[Groups(['hackathon:read'])]
     private Collection $projets;
 
     /**
