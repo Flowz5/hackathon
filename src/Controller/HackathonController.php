@@ -12,14 +12,13 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Serializer\SerializerInterface;
 
-// set to "/hackathons" later
-#[Route('/')]
+#[Route('/hackathons')]
 class HackathonController extends AbstractController
 {
     #[Route('', name: 'app_hackathon_index_html', methods: ['GET'])]
     public function indexHtml(HackathonRepository $hackathonRepository): Response
     {
-        $hackathons = $hackathonRepository->findAll();
+        $hackathons = $hackathonRepository->findBy([], ['dateHeureDebut' => 'ASC']);
 
         return $this->render('hackathon/index.html.twig', [
             'hackathons' => $hackathons,
@@ -56,9 +55,14 @@ class HackathonController extends AbstractController
 
         $entityManager->persist($hackathon);
         $entityManager->flush();
-
         $jsonContent = $serializer->serialize($hackathon, 'json', ['groups' => 'hackathon:read']);
 
         return JsonResponse::fromJsonString($jsonContent, Response::HTTP_CREATED);
+    }
+
+    #[Route('/{id}', name: 'app_hackathon_show', requirements: ['id' => '\d+'])]
+    public function show(Hackathon $hackathon): Response
+    {
+        return $this->render('hackathon/show.html.twig', ['hackathon' => $hackathon]);
     }
 }

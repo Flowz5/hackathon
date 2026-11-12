@@ -1,0 +1,13 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ hackathon.theme }}{% endblock %}
+
+{% block body %}
+    <h1>{{ hackathon.theme }}</h1>
+    <p><strong>Lieu :</strong> {{ hackathon.lieu }} - {{ hackathon.ville }}</p>
+    <p><strong>Date de début :</strong> {{ hackathon.dateHeureDebut|date('d/m/Y H:i') }}</p>
+    <p><strong>Date de fin :</strong> {{ hackathon.dateHeureFin|date('d/m/Y H:i') }}</p>
+    <p><strong>Objectifs :</strong> {{ hackathon.objectifs }}</p>
+
+    <p><a href="{{ path('app_hackathon_index_html') }}">Retour à la liste des hackathons</a></p>
+{% endblock %}

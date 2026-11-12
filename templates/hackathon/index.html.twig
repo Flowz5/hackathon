@@ -19,17 +19,19 @@
                         <th>Début</th>
                         <th>Fin</th>
                         <th>Projets</th>
+                        <th>Thèmes</th>
                     </tr>
                 </thead>
                 <tbody>
-                    {% for h in hackathons %}
+                    {% for hackathon in hackathons %}
                         <tr>
-                            <td>{{ h.id }}</td>
-                            <td>{{ h.theme }}</td>
-                            <td>{{ h.ville }} ({{ h.lieu }})</td>
-                            <td>{{ h.dateHeureDebut|date('d/m/Y H:i') }}</td>
-                            <td>{{ h.dateHeureFin|date('d/m/Y H:i') }}</td>
-                            <td>{{ h.projets|length }} projet(s)</td>
+                            <td>{{ hackathon.id }}</td>
+                            <td>{{ hackathon.theme }}</td>
+                            <td>{{ hackathon.ville }} ({{ hackathon.lieu }})</td>
+                            <td>{{ hackathon.dateHeureDebut|date('d/m/Y H:i') }}</td>
+                            <td>{{ hackathon.dateHeureFin|date('d/m/Y H:i') }}</td>
+                            <td>{{ hackathon.projets|length }} projet(s)</td>
+                            <td><a href="{{ path('app_hackathon_show', {id: hackathon.id}) }}">{{ hackathon.theme }}</a></td>
                         </tr>
                     {% endfor %}
                 </tbody>
