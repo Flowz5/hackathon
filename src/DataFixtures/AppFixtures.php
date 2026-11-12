@@ -17,86 +17,112 @@ class AppFixtures extends Fixture
 {
     public function load(ObjectManager $manager): void
     {
-        $org1 = new Organisateur();
-        $org1->setNom("Hackat'Innov France")
-            ->setStatut("Association")
-            ->setEmail("contact@hackatinnov.fr")
-            ->setSiteWeb("https://hackatinnov.fr");
-        $manager->persist($org1);
-
-        $hackathon = new Hackathon();
-        $hackathon->setTheme("L'IA au service de la Santé")
-            ->setLieu("Campus Numérique")
-            ->setVille("Nantes")
-            ->setDateHeureDebut(new \DateTime('2026-11-15 09:00:00'))
-            ->setDateHeureFin(new \DateTime('2026-11-17 18:00:00'))
-            ->setAffiche("affiche-ia-sante.png")
-            ->setObjectifs("Développer des prototypes innovants pour assister le diagnostic médical.");
-
-        if (method_exists($hackathon, 'addOrganisateur')) {
-            $hackathon->addOrganisateur($org1);
+        // 1. Créer quelques Organisateurs
+        $organisateurs = [];
+        for ($i = 0; $i < 3; $i++) {
+            $org = new Organisateur();
+            $org->setNom("Orga numéro " . $i)
+                ->setStatut("Association")
+                ->setEmail("contact$i@orga.fr")
+                ->setSiteWeb("https://orga$i.fr");
+            $manager->persist($org);
+            $organisateurs[] = $org;
         }
-        $manager->persist($hackathon);
 
-        $projet1 = new Projet();
-        $projet1->setDescription("Application mobile de détection précoce des mélanomes par vision par ordinateur.")
-            ->setRetenu(true)
-            ->setHackathon($hackathon);
-        $manager->persist($projet1);
+        // 2. Créer 5 Hackathons
+        $hackathons = [];
+        $villes = ['Paris', 'Lyon', 'Nantes', 'Lille', 'Bordeaux'];
 
-        $jury1 = new MembreJury();
-        $jury1->setNom("Dupont")
-            ->setPrenom("Valérie")
-            ->setEmail("valerie.dupont@sante-ia.org")
-            ->setTelephone("0611223344");
-        $manager->persist($jury1);
+        for ($i = 0; $i < 5; $i++) {
+            $hack = new Hackathon();
+            $hack->setDateHeureDebut(new \DateTime());
+            $hack->setDateHeureFin((new \DateTime())->modify('+2 days'));
+            $hack->setLieu('Lycée ' . ($i + 1));
+            $hack->setVille($villes[$i]);
+            $hack->setTheme('Thème ' . ($i + 1));
+            $hack->setAffiche("affiche-$i.png");
+            $hack->setObjectifs("Objectifs du hackathon numéro $i");
 
-        $part1 = new Participant();
-        $part1->setNom("Martin")
-            ->setPrenom("Lucas")
-            ->setEmail("lucas.martin@email.com")
-            ->setTelephone("0699887766")
-            ->setDateNaissance(new \DateTime('2002-04-12'))
-            ->setLienPortefolio("https://github.com/l-martin");
-        $manager->persist($part1);
+            // On ajoute un organisateur au pif pour tester le ManyToMany
+            if (method_exists($hack, 'addOrganisateur')) {
+                $hack->addOrganisateur($organisateurs[array_rand($organisateurs)]);
+            }
 
-        $part2 = new Participant();
-        $part2->setNom("Durand")
-            ->setPrenom("Emma")
-            ->setEmail("emma.durand@email.com")
-            ->setTelephone("0655443322")
-            ->setDateNaissance(new \DateTime('2001-09-20'))
-            ->setLienPortefolio("https://github.com/emma-d");
-        $manager->persist($part2);
+            $manager->persist($hack);
+            $hackathons[] = $hack;
+        }
 
-        $equipe1 = new Equipe();
-        $equipe1->setNom("DeepHealth")
-            ->setLienPrototype("https://github.com/hackat-innov/deephealth-proto")
-            ->setProjet($projet1)
-            ->setResponsable($part1);
-        $manager->persist($equipe1);
+        // 3. Créer des Projets liés aux Hackathons
+        $projets = [];
+        for ($i = 0; $i < 10; $i++) {
+            $projet = new Projet();
+            $projet->setDescription("Description du super projet $i par vision par ordinateur.")
+                ->setRetenu((bool)rand(0, 1))
+                ->setHackathon($hackathons[array_rand($hackathons)]);
+            $manager->persist($projet);
+            $projets[] = $projet;
+        }
 
-        $inscr1 = new Inscription();
-        $inscr1->setDate(new \DateTime('2026-10-01 14:30:00'))
-            ->setCompetence("Développement Symfony / Python")
-            ->setHackathon($hackathon)
-            ->setParticipant($part1)
-            ->setEquipe($equipe1);
-        $manager->persist($inscr1);
+        // 4. Créer des Jurys
+        $jurys = [];
+        for ($i = 0; $i < 4; $i++) {
+            $jury = new MembreJury();
+            $jury->setNom("JuryNom$i")
+                ->setPrenom("Prenom$i")
+                ->setEmail("jury$i@sante-ia.org")
+                ->setTelephone("061122334$i");
+            $manager->persist($jury);
+            $jurys[] = $jury;
+        }
 
-        $inscr2 = new Inscription();
-        $inscr2->setDate(new \DateTime('2026-10-02 10:15:00'))
-            ->setCompetence("Data Science & Computer Vision")
-            ->setHackathon($hackathon)
-            ->setParticipant($part2)
-            ->setEquipe($equipe1);
-        $manager->persist($inscr2);
+        // 5. Créer des Participants
+        $participants = [];
+        for ($i = 0; $i < 15; $i++) {
+            $part = new Participant();
+            $part->setNom("DevNom$i")
+                ->setPrenom("Prenom$i")
+                ->setEmail("dev$i@email.com")
+                ->setTelephone("069988776$i")
+                // Correction ici avec les parenthèses pour PHP < 8.4
+                ->setDateNaissance((new \DateTime('2000-01-01'))->modify("+$i years"))
+                ->setLienPortefolio("https://github.com/dev$i");
+            $manager->persist($part);
+            $participants[] = $part;
+        }
 
-        $note = new Noter();
-        $note->setMembreJury($jury1)
-            ->setEquipe($equipe1)
-            ->setNote(17.5);
-        $manager->persist($note);
+        // 6. Créer des Equipes
+        $equipes = [];
+        for ($i = 0; $i < 8; $i++) {
+            $equipe = new Equipe();
+            $equipe->setNom("Team $i")
+                ->setLienPrototype("https://github.com/hackat-innov/team$i-proto")
+                ->setProjet($projets[array_rand($projets)])
+                ->setResponsable($participants[array_rand($participants)]);
+            $manager->persist($equipe);
+            $equipes[] = $equipe;
+        }
+
+        // 7. Inscriptions et Notes
+        for ($i = 0; $i < 15; $i++) {
+            // Inscription
+            $inscr = new Inscription();
+            // Correction ici aussi avec les parenthèses
+            $inscr->setDate((new \DateTime('2026-10-01'))->modify("+$i days"))
+                ->setCompetence("Compétence $i")
+                ->setHackathon($hackathons[array_rand($hackathons)])
+                ->setParticipant($participants[$i])
+                ->setEquipe($equipes[array_rand($equipes)]);
+            $manager->persist($inscr);
+
+            // Note au pif pour quelques équipes
+            if ($i % 2 === 0) {
+                $note = new Noter();
+                $note->setMembreJury($jurys[array_rand($jurys)])
+                    ->setEquipe($equipes[array_rand($equipes)])
+                    ->setNote(rand(10, 20));
+                $manager->persist($note);
+            }
+        }
 
         $manager->flush();
     }
