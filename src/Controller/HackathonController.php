@@ -12,7 +12,8 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Serializer\SerializerInterface;
 
-#[Route('/hackathons')]
+// set to "/hackathons" later
+#[Route('/')]
 class HackathonController extends AbstractController
 {
     #[Route('', name: 'app_hackathon_index_html', methods: ['GET'])]
