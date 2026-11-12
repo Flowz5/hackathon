@@ -40,7 +40,7 @@ class MembreJury extends Membre
     {
         if (!$this->hackathons->contains($hackathon)) {
             $this->hackathons->add($hackathon);
-            $hackathon->addMembresJury($this);
+            $hackathon->addMembreJury($this);
         }
 
         return $this;
@@ -49,7 +49,7 @@ class MembreJury extends Membre
     public function removeHackathon(Hackathon $hackathon): static
     {
         if ($this->hackathons->removeElement($hackathon)) {
-            $hackathon->removeMembresJury($this);
+            $hackathon->removeMembreJury($this);
         }
 
         return $this;

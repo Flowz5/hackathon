@@ -201,18 +201,18 @@ class Hackathon
         return $this->membresJury;
     }
 
-    public function addMembresJury(MembreJury $membresJury): static
+    public function addMembreJury(MembreJury $membreJury): static
     {
-        if (!$this->membresJury->contains($membresJury)) {
-            $this->membresJury->add($membresJury);
+        if (!$this->membresJury->contains($membreJury)) {
+            $this->membresJury->add($membreJury);
         }
 
         return $this;
     }
 
-    public function removeMembresJury(MembreJury $membresJury): static
+    public function removeMembreJury(MembreJury $membreJury): static
     {
-        $this->membresJury->removeElement($membresJury);
+        $this->membresJury->removeElement($membreJury);
 
         return $this;
     }

@@ -22,7 +22,7 @@ class Noter
 
     #[ORM\ManyToOne(inversedBy: 'noters')]
     #[ORM\JoinColumn(nullable: false)]
-    private ?Equipe $Equipe = null;
+    private ?Equipe $equipe = null;
 
     public function getId(): ?int
     {
@@ -55,12 +55,12 @@ class Noter
 
     public function getEquipe(): ?Equipe
     {
-        return $this->Equipe;
+        return $this->equipe;
     }
 
-    public function setEquipe(?Equipe $Equipe): static
+    public function setEquipe(?Equipe $equipe): static
     {
-        $this->Equipe = $Equipe;
+        $this->equipe = $equipe;
 
         return $this;
     }

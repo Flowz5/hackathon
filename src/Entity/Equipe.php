@@ -30,13 +30,13 @@ class Equipe
     /**
      * @var Collection<int, Inscription>
      */
-    #[ORM\OneToMany(targetEntity: Inscription::class, mappedBy: 'ManyToOne')]
+    #[ORM\OneToMany(targetEntity: Inscription::class, mappedBy: 'equipe')]
     private Collection $inscriptions;
 
     /**
      * @var Collection<int, Noter>
      */
-    #[ORM\OneToMany(targetEntity: Noter::class, mappedBy: 'Equipe')]
+    #[ORM\OneToMany(targetEntity: Noter::class, mappedBy: 'equipe')]
     private Collection $noters;
 
     public function __construct()
@@ -110,7 +110,7 @@ class Equipe
     {
         if (!$this->inscriptions->contains($inscription)) {
             $this->inscriptions->add($inscription);
-            $inscription->setManyToOne($this);
+            $inscription->setEquipe($this);
         }
 
         return $this;
@@ -120,8 +120,8 @@ class Equipe
     {
         if ($this->inscriptions->removeElement($inscription)) {
             // set the owning side to null (unless already changed)
-            if ($inscription->getManyToOne() === $this) {
-                $inscription->setManyToOne(null);
+            if ($inscription->getEquipe() === $this) {
+                $inscription->setEquipe(null);
             }
         }
 
