@@ -102,16 +102,25 @@ class AppFixtures extends Fixture
             $equipes[] = $equipe;
         }
 
+        // Les hackathons doivent avoir un id avant de créer les inscriptions :
+        // la clé primaire d'Inscription est (id_hackathon, num).
+        $manager->flush();
+
         // 7. Inscriptions et Notes
+        $numParHackathon = []; // compteur de num propre à chaque hackathon
         for ($i = 0; $i < 15; $i++) {
-            // Inscription
+            // Les 4 premiers hackathons reçoivent des inscrits, le 5e reste vide (test du cas "aucun inscrit")
+            $hack = $hackathons[$i % 4];
+            $numParHackathon[$hack->getId()] = ($numParHackathon[$hack->getId()] ?? 0) + 1;
+
             $inscr = new Inscription();
-            // Correction ici aussi avec les parenthèses
-            $inscr->setDate((new \DateTime('2026-10-01'))->modify("+$i days"))
+            $inscr->setHackathon($hack)
+                ->setNum($numParHackathon[$hack->getId()])
+                ->setDate((new \DateTime('2026-10-01'))->modify("+$i days"))
                 ->setCompetence("Compétence $i")
-                ->setHackathon($hackathons[array_rand($hackathons)])
                 ->setParticipant($participants[$i])
-                ->setEquipe($equipes[array_rand($equipes)]);
+                // 1 inscrit sur 5 n'a pas encore d'équipe
+                ->setEquipe($i % 5 === 4 ? null : $equipes[array_rand($equipes)]);
             $manager->persist($inscr);
 
             // Note au pif pour quelques équipes

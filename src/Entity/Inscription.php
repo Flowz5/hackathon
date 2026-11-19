@@ -8,10 +8,15 @@ use Doctrine\ORM\Mapping as ORM;
 #[ORM\Entity(repositoryClass: InscriptionRepository::class)]
 class Inscription
 {
+    // Clé primaire composée (idHackathon, num) : num est relatif au hackathon
     #[ORM\Id]
-    #[ORM\GeneratedValue]
+    #[ORM\ManyToOne(inversedBy: 'inscriptions')]
+    #[ORM\JoinColumn(name: 'id_hackathon', nullable: false)]
+    private ?Hackathon $hackathon = null;
+
+    #[ORM\Id]
     #[ORM\Column]
-    private ?int $id = null;
+    private ?int $num = null;
 
     #[ORM\Column]
     private ?\DateTime $date = null;
@@ -20,18 +25,22 @@ class Inscription
     private ?string $competence = null;
 
     #[ORM\ManyToOne(inversedBy: 'inscriptions')]
-    private ?Hackathon $hackathon = null;
-
-    #[ORM\ManyToOne(inversedBy: 'inscriptions')]
     #[ORM\JoinColumn(nullable: false)]
     private ?Participant $participant = null;
 
     #[ORM\ManyToOne(inversedBy: 'inscriptions')]
     private ?Equipe $equipe = null;
 
-    public function getId(): ?int
+    public function getNum(): ?int
     {
-        return $this->id;
+        return $this->num;
+    }
+
+    public function setNum(int $num): static
+    {
+        $this->num = $num;
+
+        return $this;
     }
 
     public function getDate(): ?\DateTime

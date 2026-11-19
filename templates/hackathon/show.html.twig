@@ -9,5 +9,68 @@
     <p><strong>Date de fin :</strong> {{ hackathon.dateHeureFin|date('d/m/Y H:i') }}</p>
     <p><strong>Objectifs :</strong> {{ hackathon.objectifs }}</p>
 
+    {# ---------- Mission 3 : liste des inscrits ---------- #}
+    <h2>Inscrits ({{ hackathon.inscriptions|length }})</h2>
+
+    {% if hackathon.inscriptions is empty %}
+        <p>Aucun participant inscrit pour le moment.</p>
+    {% else %}
+        <table border="1" cellpadding="5" cellspacing="0">
+            <thead>
+                <tr>
+                    <th>N°</th>
+                    <th>Nom</th>
+                    <th>Prénom</th>
+                    <th>Date d'inscription</th>
+                    <th>Compétence</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for inscription in hackathon.inscriptions %}
+                    <tr>
+                        <td>{{ inscription.num }}</td>
+                        <td>{{ inscription.participant.nom }}</td>
+                        <td>{{ inscription.participant.prenom }}</td>
+                        <td>{{ inscription.date|date('d/m/Y') }}</td>
+                        <td>{{ inscription.competence ?? 'Non renseignée' }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        {# ---------- Mission 4 : répartition par équipe ---------- #}
+        <h2>Répartition par équipe</h2>
+
+        {# Liste des équipes distinctes (clé = id pour éviter les doublons) #}
+        {% set equipes = {} %}
+        {% for inscription in hackathon.inscriptions %}
+            {% if inscription.equipe is not null %}
+                {% set equipes = equipes|merge({('e' ~ inscription.equipe.id): inscription.equipe}) %}
+            {% endif %}
+        {% endfor %}
+
+        {% for equipe in equipes %}
+            {% set membres = hackathon.inscriptions|filter(i => i.equipe is not null and i.equipe.id == equipe.id) %}
+            <h3>{{ equipe.nom }} ({{ membres|length }} membre(s))</h3>
+            <ul>
+                {% for inscription in membres %}
+                    <li>{{ inscription.participant.prenom }} {{ inscription.participant.nom }} ({{ inscription.competence ?? 'compétence non renseignée' }})</li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <p>Aucune équipe constituée pour le moment.</p>
+        {% endfor %}
+
+        {% set sansEquipe = hackathon.inscriptions|filter(i => i.equipe is null) %}
+        {% if sansEquipe is not empty %}
+            <h3>Sans équipe ({{ sansEquipe|length }})</h3>
+            <ul>
+                {% for inscription in sansEquipe %}
+                    <li>{{ inscription.participant.prenom }} {{ inscription.participant.nom }}</li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+    {% endif %}
+
     <p><a href="{{ path('app_hackathon_index_html') }}">Retour à la liste des hackathons</a></p>
 {% endblock %}
