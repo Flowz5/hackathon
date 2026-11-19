@@ -3,7 +3,6 @@
 namespace App\Controller;
 
 use App\Entity\Hackathon;
-use App\Repository\HackathonRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
@@ -23,12 +22,10 @@ class HackathonController extends AbstractController
     }
 
     #[Route('/{id}', name: 'app_hackathon_show', requirements: ['id' => '\d+'])]
-    public function show(int $id, HackathonRepository $hackathonRepository): Response
+    public function show(int $id, EntityManagerInterface $entityManager): Response
     {
-        // from inside a controller
-        // $hackathonRepository = $entityManager->getRepository(Hackathon::class);
         // Requête unique avec JOIN (inscriptions + participants + équipes) pour éviter le N+1
-        $hackathon = $hackathonRepository->findWithInscriptions($id);
+        $hackathon = $entityManager->getRepository(Hackathon::class)->findWithInscriptions($id);
         if (!$hackathon) {
             throw $this->createNotFoundException('Aucun hackathon trouvé pour l\'id ' . $id);
         }
