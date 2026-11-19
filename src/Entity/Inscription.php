@@ -8,7 +8,6 @@ use Doctrine\ORM\Mapping as ORM;
 #[ORM\Entity(repositoryClass: InscriptionRepository::class)]
 class Inscription
 {
-    // Clé primaire composée (idHackathon, num) : num est relatif au hackathon
     #[ORM\Id]
     #[ORM\ManyToOne(inversedBy: 'inscriptions')]
     #[ORM\JoinColumn(name: 'id_hackathon', nullable: false)]

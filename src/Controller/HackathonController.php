@@ -24,7 +24,6 @@ class HackathonController extends AbstractController
     #[Route('/{id}', name: 'app_hackathon_show', requirements: ['id' => '\d+'])]
     public function show(int $id, EntityManagerInterface $entityManager): Response
     {
-        // Requête unique avec JOIN (inscriptions + participants + équipes) pour éviter le N+1
         $hackathon = $entityManager->getRepository(Hackathon::class)->findWithInscriptions($id);
         if (!$hackathon) {
             throw $this->createNotFoundException('Aucun hackathon trouvé pour l\'id ' . $id);

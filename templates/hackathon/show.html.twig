@@ -9,7 +9,6 @@
     <p><strong>Date de fin :</strong> {{ hackathon.dateHeureFin|date('d/m/Y H:i') }}</p>
     <p><strong>Objectifs :</strong> {{ hackathon.objectifs }}</p>
 
-    {# ---------- Mission 3 : liste des inscrits ---------- #}
     <h2>Inscrits ({{ hackathon.inscriptions|length }})</h2>
 
     {% if hackathon.inscriptions is empty %}
@@ -38,10 +37,8 @@
             </tbody>
         </table>
 
-        {# ---------- Mission 4 : répartition par équipe ---------- #}
         <h2>Répartition par équipe</h2>
 
-        {# Liste des équipes distinctes (clé = id pour éviter les doublons) #}
         {% set equipes = {} %}
         {% for inscription in hackathon.inscriptions %}
             {% if inscription.equipe is not null %}

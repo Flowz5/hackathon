@@ -16,10 +16,6 @@ class HackathonRepository extends ServiceEntityRepository
         parent::__construct($registry, Hackathon::class);
     }
 
-    /**
-     * Charge un hackathon avec ses inscriptions, participants et équipes
-     * en une seule requête SQL (évite le problème du N+1).
-     */
     public function findWithInscriptions(int $id): ?Hackathon
     {
         return $this->createQueryBuilder('h')
@@ -32,29 +28,4 @@ class HackathonRepository extends ServiceEntityRepository
             ->getQuery()
             ->getOneOrNullResult();
     }
-
-//    /**
-//     * @return Hackathon[] Returns an array of Hackathon objects
-//     */
-//    public function findByExampleField($value): array
-//    {
-//        return $this->createQueryBuilder('h')
-//            ->andWhere('h.exampleField = :val')
-//            ->setParameter('val', $value)
-//            ->orderBy('h.id', 'ASC')
-//            ->setMaxResults(10)
-//            ->getQuery()
-//            ->getResult()
-//        ;
-//    }
-
-//    public function findOneBySomeField($value): ?Hackathon
-//    {
-//        return $this->createQueryBuilder('h')
-//            ->andWhere('h.exampleField = :val')
-//            ->setParameter('val', $value)
-//            ->getQuery()
-//            ->getOneOrNullResult()
-//        ;
-//    }
 }

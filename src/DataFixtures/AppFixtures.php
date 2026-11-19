@@ -15,124 +15,172 @@ use Doctrine\Persistence\ObjectManager;
 
 class AppFixtures extends Fixture
 {
+    private const PRENOMS = [
+        'Emma', 'Lucas', 'Léa', 'Hugo', 'Chloé', 'Louis', 'Manon', 'Gabriel', 'Inès', 'Arthur',
+        'Camille', 'Jules', 'Sarah', 'Adam', 'Jade', 'Nathan', 'Lina', 'Raphaël', 'Zoé', 'Tom',
+        'Alice', 'Noah', 'Juliette', 'Ethan', 'Louise', 'Paul', 'Anna', 'Théo', 'Clara', 'Mathis',
+        'Eva', 'Sacha', 'Rose', 'Maël', 'Lola', 'Enzo', 'Ambre', 'Nolan', 'Mila', 'Yanis',
+        'Agathe', 'Timéo', 'Romane', 'Axel', 'Margaux',
+    ];
+
+    private const NOMS = [
+        'Martin', 'Bernard', 'Thomas', 'Petit', 'Robert', 'Richard', 'Durand', 'Dubois', 'Moreau', 'Laurent',
+        'Simon', 'Michel', 'Lefebvre', 'Leroy', 'Roux', 'David', 'Bertrand', 'Morel', 'Fournier', 'Girard',
+        'Bonnet', 'Dupont', 'Lambert', 'Fontaine', 'Rousseau', 'Vincent', 'Muller', 'Lefèvre', 'Faure', 'André',
+        'Mercier', 'Blanc', 'Guérin', 'Boyer', 'Garnier', 'Chevalier', 'François', 'Legrand', 'Gauthier', 'Garcia',
+        'Perrin', 'Robin', 'Clément', 'Morin', 'Nicolas',
+    ];
+
+    private const COMPETENCES = [
+        'Développement back-end', 'Développement front-end', 'Data science', 'UX/UI design',
+        'DevOps', 'Gestion de projet', 'Cybersécurité', 'Développement mobile',
+    ];
+
+    private const NOMS_EQUIPES = [
+        'Les Pixels', 'Code Breakers', 'Null Pointers', 'Byte Me', 'Stack Overflowers', 'Les Débuggeurs',
+        'Green Coders', 'Data Wizards', 'Les Algorithmiciens', 'Cloud Nine', 'Open Source Squad', 'Les Hackeurs Fous',
+    ];
+
+    private const HACKATHONS = [
+        ['theme' => 'IA et santé',             'ville' => 'Paris',     'lieu' => 'Lycée Jean Jaurès',        'debut' => '2026-09-18 09:00', 'equipes' => [4, 3, 5],    'sansEquipe' => 2],
+        ['theme' => 'Ville durable',           'ville' => 'Lyon',      'lieu' => 'La Cuisine du Web',        'debut' => '2026-10-16 09:00', 'equipes' => [3, 4, 4],    'sansEquipe' => 1],
+        ['theme' => 'Cybersécurité',           'ville' => 'Nantes',    'lieu' => 'Lycée Livet',              'debut' => '2026-12-04 09:00', 'equipes' => [5, 3],       'sansEquipe' => 0],
+        ['theme' => 'Accessibilité numérique', 'ville' => 'Lille',     'lieu' => 'EuraTechnologies',         'debut' => '2027-01-22 09:00', 'equipes' => [4, 4, 3, 3], 'sansEquipe' => 3],
+        ['theme' => 'Agriculture connectée',   'ville' => 'Bordeaux',  'lieu' => 'Lycée Gustave Eiffel',     'debut' => '2027-02-12 09:00', 'equipes' => [],           'sansEquipe' => 5],
+        ['theme' => 'Éducation et numérique',  'ville' => 'Marseille', 'lieu' => 'Lycée Saint-Exupéry',      'debut' => '2027-03-19 09:00', 'equipes' => [],           'sansEquipe' => 0],
+    ];
+
     public function load(ObjectManager $manager): void
     {
-        // 1. Créer quelques Organisateurs
         $organisateurs = [];
-        for ($i = 0; $i < 3; $i++) {
+        foreach (['Hackat\'Innov', 'Région Numérique', 'Code for Good'] as $i => $nom) {
             $org = new Organisateur();
-            $org->setNom("Orga numéro " . $i)
-                ->setStatut("Association")
+            $org->setNom($nom)
+                ->setStatut($i === 1 ? 'Collectivité' : 'Association')
                 ->setEmail("contact$i@orga.fr")
                 ->setSiteWeb("https://orga$i.fr");
             $manager->persist($org);
             $organisateurs[] = $org;
         }
 
-        // 2. Créer 5 Hackathons
-        $hackathons = [];
-        $villes = ['Paris', 'Lyon', 'Nantes', 'Lille', 'Bordeaux'];
-
-        for ($i = 0; $i < 5; $i++) {
-            $hack = new Hackathon();
-            $hack->setDateHeureDebut(new \DateTime());
-            $hack->setDateHeureFin((new \DateTime())->modify('+2 days'));
-            $hack->setLieu('Lycée ' . ($i + 1));
-            $hack->setVille($villes[$i]);
-            $hack->setTheme('Thème ' . ($i + 1));
-            $hack->setAffiche("affiche-$i.png");
-            $hack->setObjectifs("Objectifs du hackathon numéro $i");
-
-            // On ajoute un organisateur au pif pour tester le ManyToMany
-            if (method_exists($hack, 'addOrganisateur')) {
-                $hack->addOrganisateur($organisateurs[array_rand($organisateurs)]);
-            }
-
-            $manager->persist($hack);
-            $hackathons[] = $hack;
-        }
-
-        // 3. Créer des Projets liés aux Hackathons
-        $projets = [];
-        for ($i = 0; $i < 10; $i++) {
-            $projet = new Projet();
-            $projet->setDescription("Description du super projet $i par vision par ordinateur.")
-                ->setRetenu((bool)rand(0, 1))
-                ->setHackathon($hackathons[array_rand($hackathons)]);
-            $manager->persist($projet);
-            $projets[] = $projet;
-        }
-
-        // 4. Créer des Jurys
         $jurys = [];
-        for ($i = 0; $i < 4; $i++) {
+        for ($i = 0; $i < 6; $i++) {
             $jury = new MembreJury();
-            $jury->setNom("JuryNom$i")
-                ->setPrenom("Prenom$i")
-                ->setEmail("jury$i@sante-ia.org")
-                ->setTelephone("061122334$i");
+            $jury->setNom(self::NOMS[44 - $i])
+                ->setPrenom(self::PRENOMS[44 - $i])
+                ->setEmail("jury$i@hackat-innov.fr")
+                ->setTelephone(sprintf('06112233%02d', $i));
             $manager->persist($jury);
             $jurys[] = $jury;
         }
 
-        // 5. Créer des Participants
         $participants = [];
-        for ($i = 0; $i < 15; $i++) {
+        foreach (self::PRENOMS as $i => $prenom) {
+            $nom = self::NOMS[$i];
             $part = new Participant();
-            $part->setNom("DevNom$i")
-                ->setPrenom("Prenom$i")
-                ->setEmail("dev$i@email.com")
-                ->setTelephone("069988776$i")
-                // Correction ici avec les parenthèses pour PHP < 8.4
-                ->setDateNaissance((new \DateTime('2000-01-01'))->modify("+$i years"))
-                ->setLienPortefolio("https://github.com/dev$i");
+            $part->setNom($nom)
+                ->setPrenom($prenom)
+                ->setEmail(sprintf('%s.%s%d@email.com', $this->slug($prenom), $this->slug($nom), $i))
+                ->setTelephone(sprintf('06998877%02d', $i))
+                ->setDateNaissance(new \DateTime(sprintf('%d-%02d-%02d', 1998 + $i % 9, 1 + $i % 12, 1 + $i % 28)))
+                ->setLienPortefolio($i % 4 === 3 ? null : 'https://github.com/' . $this->slug($prenom . $nom));
             $manager->persist($part);
             $participants[] = $part;
         }
 
-        // 6. Créer des Equipes
-        $equipes = [];
-        for ($i = 0; $i < 8; $i++) {
-            $equipe = new Equipe();
-            $equipe->setNom("Team $i")
-                ->setLienPrototype("https://github.com/hackat-innov/team$i-proto")
-                ->setProjet($projets[array_rand($projets)])
-                ->setResponsable($participants[array_rand($participants)]);
-            $manager->persist($equipe);
-            $equipes[] = $equipe;
+        $hackathons = [];
+        foreach (self::HACKATHONS as $i => $data) {
+            $debut = new \DateTime($data['debut']);
+            $hack = new Hackathon();
+            $hack->setTheme($data['theme'])
+                ->setVille($data['ville'])
+                ->setLieu($data['lieu'])
+                ->setDateHeureDebut($debut)
+                ->setDateHeureFin((clone $debut)->modify('+2 days 8 hours'))
+                ->setAffiche("affiche-$i.png")
+                ->setObjectifs("Imaginer en 48 h des solutions innovantes autour du thème « {$data['theme']} ».")
+                ->addOrganisateur($organisateurs[$i % 3]);
+            if ($i % 2 === 0) {
+                $hack->addOrganisateur($organisateurs[($i + 1) % 3]);
+            }
+            $jurys[$i % 6]->addHackathon($hack);
+            $jurys[($i + 1) % 6]->addHackathon($hack);
+            $manager->persist($hack);
+            $hackathons[] = $hack;
         }
-
-        // Les hackathons doivent avoir un id avant de créer les inscriptions :
-        // la clé primaire d'Inscription est (id_hackathon, num).
         $manager->flush();
 
-        // 7. Inscriptions et Notes
-        $numParHackathon = []; // compteur de num propre à chaque hackathon
-        for ($i = 0; $i < 15; $i++) {
-            // Les 4 premiers hackathons reçoivent des inscrits, le 5e reste vide (test du cas "aucun inscrit")
-            $hack = $hackathons[$i % 4];
-            $numParHackathon[$hack->getId()] = ($numParHackathon[$hack->getId()] ?? 0) + 1;
+        $curseurParticipant = 0;
+        $numEquipe = 0;
+        $numInscriptionGlobal = 0;
 
-            $inscr = new Inscription();
-            $inscr->setHackathon($hack)
-                ->setNum($numParHackathon[$hack->getId()])
-                ->setDate((new \DateTime('2026-10-01'))->modify("+$i days"))
-                ->setCompetence("Compétence $i")
-                ->setParticipant($participants[$i])
-                // 1 inscrit sur 5 n'a pas encore d'équipe
-                ->setEquipe($i % 5 === 4 ? null : $equipes[array_rand($equipes)]);
-            $manager->persist($inscr);
+        foreach (self::HACKATHONS as $h => $data) {
+            $hack = $hackathons[$h];
+            $num = 0;
 
-            // Note au pif pour quelques équipes
-            if ($i % 2 === 0) {
-                $note = new Noter();
-                $note->setMembreJury($jurys[array_rand($jurys)])
-                    ->setEquipe($equipes[array_rand($equipes)])
-                    ->setNote(rand(10, 20));
-                $manager->persist($note);
+            $groupes = $data['equipes'];
+            if ($data['sansEquipe'] > 0) {
+                $groupes[] = null;
+            }
+
+            foreach ($groupes as $taille) {
+                $equipe = null;
+                if ($taille !== null) {
+                    $projet = new Projet();
+                    $projet->setDescription(sprintf('Projet de l\'équipe %s pour le hackathon « %s ».', self::NOMS_EQUIPES[$numEquipe % 12], $data['theme']))
+                        ->setRetenu($numEquipe % 3 === 0)
+                        ->setHackathon($hack);
+                    $manager->persist($projet);
+
+                    $equipe = new Equipe();
+                    $equipe->setNom(self::NOMS_EQUIPES[$numEquipe % 12])
+                        ->setLienPrototype(sprintf('https://github.com/hackat-innov/equipe-%d', $numEquipe + 1))
+                        ->setProjet($projet);
+                    $manager->persist($equipe);
+                    $numEquipe++;
+                }
+
+                $nbMembres = $taille ?? $data['sansEquipe'];
+                for ($m = 0; $m < $nbMembres; $m++) {
+                    $participant = $participants[$curseurParticipant % count($participants)];
+                    $curseurParticipant++;
+                    $num++;
+
+                    $inscr = new Inscription();
+                    $inscr->setHackathon($hack)
+                        ->setNum($num)
+                        ->setDate((clone $hack->getDateHeureDebut())->modify(sprintf('-%d days', 40 - $num * 2)))
+
+                        ->setCompetence($numInscriptionGlobal % 7 === 6 ? null : self::COMPETENCES[$numInscriptionGlobal % 8])
+                        ->setParticipant($participant)
+                        ->setEquipe($equipe);
+                    $manager->persist($inscr);
+                    $numInscriptionGlobal++;
+
+                    if ($equipe !== null && $m === 0) {
+                        $equipe->setResponsable($participant);
+                    }
+                }
+
+                if ($equipe !== null) {
+                    for ($j = 0; $j < 2; $j++) {
+                        $note = new Noter();
+                        $note->setMembreJury($jurys[($h + $j) % 6])
+                            ->setEquipe($equipe)
+                            ->setNote(10 + ($numEquipe * 3 + $j * 5) % 11);
+                        $manager->persist($note);
+                    }
+                }
             }
         }
 
         $manager->flush();
+    }
+
+    private function slug(string $texte): string
+    {
+        $texte = strtr($texte, ['é' => 'e', 'è' => 'e', 'ë' => 'e', 'ç' => 'c', 'ï' => 'i', 'É' => 'e']);
+
+        return strtolower(preg_replace('/[^A-Za-z]/', '', $texte));
     }
 }

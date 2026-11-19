@@ -10,32 +10,32 @@
         {% if hackathons is empty %}
             <p>Aucun hackathon trouvé en base de données.</p>
         {% else %}
-            <table border="1" cellpadding="5" cellspacing="0">
-                <thead>
-                    <tr>
-                        <th>#</th>
-                        <th>Thème</th>
-                        <th>Ville & Lieu</th>
-                        <th>Début</th>
-                        <th>Fin</th>
-                        <th>Projets</th>
-                        <th>Thèmes</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for hackathon in hackathons %}
+            <div class="table-wrapper">
+                <table>
+                    <thead>
                         <tr>
-                            <td>{{ hackathon.id }}</td>
-                            <td>{{ hackathon.theme }}</td>
-                            <td>{{ hackathon.ville }} ({{ hackathon.lieu }})</td>
-                            <td>{{ hackathon.dateHeureDebut|date('d/m/Y H:i') }}</td>
-                            <td>{{ hackathon.dateHeureFin|date('d/m/Y H:i') }}</td>
-                            <td>{{ hackathon.projets|length }} projet(s)</td>
-                            <td><a href="{{ path('app_hackathon_show', {id: hackathon.id}) }}">{{ hackathon.theme }}</a></td>
+                            <th>#</th>
+                            <th>Thème</th>
+                            <th>Ville & Lieu</th>
+                            <th>Début</th>
+                            <th>Fin</th>
+                            <th>Projets</th>
                         </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
+                    </thead>
+                    <tbody>
+                        {% for hackathon in hackathons %}
+                            <tr>
+                                <td class="num">{{ hackathon.id }}</td>
+                                <td class="theme"><a href="{{ path('app_hackathon_show', {id: hackathon.id}) }}">{{ hackathon.theme }}</a></td>
+                                <td>{{ hackathon.ville }} <span class="num">({{ hackathon.lieu }})</span></td>
+                                <td class="date">{{ hackathon.dateHeureDebut|date('d/m/Y H:i') }}</td>
+                                <td class="date">{{ hackathon.dateHeureFin|date('d/m/Y H:i') }}</td>
+                                <td><span class="badge">{{ hackathon.projets|length }} projet(s)</span></td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
         {% endif %}
     </div>
 {% endblock %}
