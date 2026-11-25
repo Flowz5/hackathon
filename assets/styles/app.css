@@ -98,3 +98,83 @@ td.theme a {
     font-size: 0.8rem;
     font-weight: 600;
 }
+
+/* ---------- Formulaire d'affectation ---------- */
+
+form {
+    box-sizing: border-box;
+    margin: 1.5rem auto;
+    padding: 1.5rem;
+    background: var(--surface);
+    border-radius: 10px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+}
+
+form > div {
+    max-width: 480px;
+    margin-bottom: 1rem;
+}
+
+form > div:last-of-type {
+    margin-bottom: 0;
+}
+
+form label {
+    display: block;
+    margin-bottom: 0.35rem;
+    font-weight: 600;
+    font-size: 0.9rem;
+}
+
+form select {
+    width: 100%;
+    padding: 0.55rem 0.75rem;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    background: #fff;
+    font: inherit;
+    color: var(--text);
+}
+
+form select:focus {
+    outline: none;
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px var(--primary-light);
+}
+
+form button[type="submit"] {
+    padding: 0.6rem 1.2rem;
+    border: none;
+    border-radius: 6px;
+    background: var(--primary);
+    color: #fff;
+    font: inherit;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+form button[type="submit"]:hover {
+    filter: brightness(1.1);
+}
+
+/* Erreurs de validation (form_row les affiche dans un <ul>) */
+form ul {
+    margin: 0 0 0.35rem;
+    padding: 0;
+    list-style: none;
+    color: #b91c1c;
+    font-size: 0.85rem;
+}
+
+form select[aria-invalid="true"] {
+    border-color: #b91c1c;
+}
+
+/* Message flash de succès */
+p[role="status"] {
+    padding: 0.75rem 1rem;
+    border-left: 4px solid #16a34a;
+    border-radius: 6px;
+    background: #f0fdf4;
+    color: #166534;
+}

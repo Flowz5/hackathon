@@ -1,0 +1,46 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Équipes - {{ hackathon.theme }}{% endblock %}
+
+{% block body %}
+    <h1>Équipes du hackathon « {{ hackathon.theme }} »</h1>
+
+    <p>
+        <a href="{{ path('app_hackathon_affectation', {id: hackathon.id}) }}">Affecter un participant à une équipe</a>
+        · <a href="{{ path('app_hackathon_show', {id: hackathon.id}) }}">Retour au hackathon</a>
+    </p>
+
+    {% for equipe in equipes %}
+        {% set nb = equipe.inscriptions|length %}
+        <h2>
+            {{ equipe.nom }} ({{ nb }} / {{ nbMaxMembres }})
+            {% if nb >= nbMaxMembres %}<span class="badge">Complète</span>{% endif %}
+        </h2>
+        {% if equipe.inscriptions is empty %}
+            <p>Aucun membre.</p>
+        {% else %}
+            <ul>
+                {% for inscription in equipe.inscriptions %}
+                    <li>
+                        {{ inscription.participant.prenom }} {{ inscription.participant.nom }}
+                        {% if equipe.responsable and equipe.responsable.id == inscription.participant.id %}(responsable){% endif %}
+                    </li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+    {% else %}
+        <p>Aucune équipe pour ce hackathon.</p>
+    {% endfor %}
+
+    {% set sansEquipe = hackathon.inscriptions|filter(i => i.equipe is null) %}
+    <h2>Sans équipe ({{ sansEquipe|length }})</h2>
+    {% if sansEquipe is empty %}
+        <p>Tous les inscrits ont une équipe.</p>
+    {% else %}
+        <ul>
+            {% for inscription in sansEquipe %}
+                <li>{{ inscription.participant.prenom }} {{ inscription.participant.nom }}</li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+{% endblock %}

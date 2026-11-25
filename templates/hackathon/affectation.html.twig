@@ -12,6 +12,8 @@
 
     {% if hackathon.inscriptions is empty %}
         <p>Aucun participant inscrit à ce hackathon.</p>
+    {% elseif equipesDisponibles is empty %}
+        <p>Aucune équipe disponible : toutes les équipes sont complètes (ou il n'y a pas d'équipe).</p>
     {% else %}
         {{ form_start(form) }}
             {{ form_row(form.inscription) }}
@@ -20,5 +22,8 @@
         {{ form_end(form) }}
     {% endif %}
 
-    <p><a href="{{ path('app_hackathon_show', {id: hackathon.id}) }}">Retour au hackathon</a></p>
+    <p>
+        <a href="{{ path('app_hackathon_equipes', {id: hackathon.id}) }}">Voir les équipes</a>
+        · <a href="{{ path('app_hackathon_show', {id: hackathon.id}) }}">Retour au hackathon</a>
+    </p>
 {% endblock %}

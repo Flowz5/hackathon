@@ -41,6 +41,21 @@ class HackathonController extends AbstractController
         return $this->render('hackathon/show.html.twig', ['hackathon' => $hackathon]);
     }
 
+    #[Route('/{id}/equipes', name: 'app_hackathon_equipes', requirements: ['id' => '\d+'], methods: ['GET'])]
+    public function equipes(int $id, HackathonRepository $hackathonRepository, EquipeRepository $equipeRepository): Response
+    {
+        $hackathon = $hackathonRepository->findWithInscriptions($id);
+        if (!$hackathon) {
+            throw $this->createNotFoundException('Aucun hackathon trouvé pour l\'id ' . $id);
+        }
+
+        return $this->render('hackathon/equipes.html.twig', [
+            'hackathon' => $hackathon,
+            'equipes' => $equipeRepository->findByHackathon($hackathon),
+            'nbMaxMembres' => Equipe::NB_MAX_MEMBRES,
+        ]);
+    }
+
     #[Route('/{id}/affectation', name: 'app_hackathon_affectation', requirements: ['id' => '\d+'], methods: ['GET', 'POST'])]
     public function affecter(
         int $id,
@@ -55,8 +70,8 @@ class HackathonController extends AbstractController
             throw $this->createNotFoundException('Aucun hackathon trouvé pour l\'id ' . $id);
         }
 
-        // Seulement les équipes de CE hackathon (Equipe -> Projet -> Hackathon)
-        $listeEquipes = $equipeRepository->findByHackathon($hackathon);
+        // Seulement les équipes de CE hackathon (Equipe -> Projet -> Hackathon) qui ne sont pas complètes
+        $listeEquipes = $equipeRepository->findDisponiblesByHackathon($hackathon, Equipe::NB_MAX_MEMBRES);
 
         $form = $this->createFormBuilder()
             ->add('inscription', ChoiceType::class, [
@@ -110,6 +125,7 @@ class HackathonController extends AbstractController
         return $this->render('hackathon/affectation.html.twig', [
             'hackathon' => $hackathon,
             'form' => $form,
+            'equipesDisponibles' => $listeEquipes,
         ]);
     }
 }

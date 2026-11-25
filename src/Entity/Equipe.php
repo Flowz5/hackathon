@@ -10,6 +10,9 @@ use Doctrine\ORM\Mapping as ORM;
 #[ORM\Entity(repositoryClass: EquipeRepository::class)]
 class Equipe
 {
+    /** Nombre maximum de participants dans une équipe */
+    public const NB_MAX_MEMBRES = 5;
+
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
