@@ -1,0 +1,24 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Affectation - {{ hackathon.theme }}{% endblock %}
+
+{% block body %}
+    <h1>Affecter un participant à une équipe</h1>
+    <p>Hackathon : <strong>{{ hackathon.theme }}</strong> ({{ hackathon.ville }})</p>
+
+    {% for message in app.flashes('success') %}
+        <p role="status">{{ message }}</p>
+    {% endfor %}
+
+    {% if hackathon.inscriptions is empty %}
+        <p>Aucun participant inscrit à ce hackathon.</p>
+    {% else %}
+        {{ form_start(form) }}
+            {{ form_row(form.inscription) }}
+            {{ form_row(form.equipe) }}
+            {{ form_row(form.enregistrer) }}
+        {{ form_end(form) }}
+    {% endif %}
+
+    <p><a href="{{ path('app_hackathon_show', {id: hackathon.id}) }}">Retour au hackathon</a></p>
+{% endblock %}
